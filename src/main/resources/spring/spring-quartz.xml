@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- 线程执行器配置，用于任务注册 -->
+	<bean id="executor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="maxPoolSize" value="20" />
+		<property name="queueCapacity" value="100" />
+	</bean>
+
+	<!-- 调度业务 -->
+	<bean id="crawBaiduPlaceTaskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="crawBaiduPlaceTask" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false "/>
+	</bean>
+
+	<bean id="crawBaiduPlaceTaskJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="crawBaiduPlaceTaskJobDetail" />
+		<property name="startDelay" value="6000" />
+		<property name="repeatInterval" value="300000" />
+
+	</bean>
+
+
+	<!-- 设置调度 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="crawBaiduPlaceTaskJobTrigger" /> 
+			</list>
+		</property>
+		<property name="taskExecutor" ref="executor" />
+	</bean>
+</beans>

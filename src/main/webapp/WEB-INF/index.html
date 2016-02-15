@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>Contacts</title>
+    <link rel='stylesheet' href='css/style.css'/>
+    <link rel='stylesheet' href='css/bootstrap.min.css'/>
+<script type="text/javascript" src="js/lib/jquery/jquery.js"></script>
+<script src="js/lib/bootstrap/bootstrap.min.js"></script>
+</head>
+<body ng-controller='AppCtrl'>
+
+<div class="navbar navbar-fixed-top" ng-controller="NavBarController">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Project</a>
+            <div class="nav-collapse">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="/">首页</a></li>
+                    <li><a href="/typehead/init.html">初始化</a></li>
+                    <li><a href="/typehead/search.html">Search</a></li>
+                    <li><a href="/#/advanced">索引新增</a></li>
+                    <!-- For future use in latest branch -->
+                    <li><a href="/#/compute">索引删除</a></li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </div>
+    </div><!-- /navbar-inner -->
+</div>
+
+<div class="row" >
+      <div class="col-xs-6 col-sm-3" 
+         style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+      </div>
+      <div class="col-xs-6 col-sm-3" 
+         style="background-color: #dedef8;box-shadow: 
+         inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut 
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+            nisi ut aliquip ex ea commodo consequat.
+         </p>
+         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
+            eiusmod tempor incididunt ut. 
+         </p>
+      </div>
+
+      <div class="clearfix visible-xs"></div>
+
+      <div class="col-xs-6 col-sm-3" 
+         style="background-color: #dedef8;
+         box-shadow:inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+         <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+            laboris nisi ut aliquip ex ea commodo consequat. 
+         </p>
+      </div>
+      <div class="col-xs-6 col-sm-3" 
+         style="background-color: #dedef8;box-shadow: 
+         inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut 
+            enim ad minim 
+         </p>
+      </div>
+   </div>
+</body>
+</html>

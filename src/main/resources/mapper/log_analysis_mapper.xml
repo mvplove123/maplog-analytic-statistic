@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="log_analysis_mapper">
+
+	<resultMap id="defaultResultMap" type="poi">
+		<result property="uniqueId" column="UNIQUEID" />
+		<result property="dataId" column="DATAID" />
+		<result property="caption" column="CAPTION" />
+		<result property="category" column="CATEGORY" />
+		<result property="subCategory" column="SUBCATEGORY" />
+		<result property="extendAlias" column="EXTEND_ALIAS"/>
+		<result property="alias" column="ALIAS"/>
+
+		<result property="geometry" column="geometry" typeHandler = "com.jerry.map.dao.SdoGeometryTypeHandler"/>
+	</resultMap>
+
+	<select id="queryPoiByCity" parameterType="String"
+			resultMap="defaultResultMap">
+		select UNIQUEID,DATAID,CAPTION,CATEGORY,SUBCATEGORY,ALIAS,CITY,geometry from BK13_T_LYR_ENTITY_0129 t where t.geometry.SDO_POINT.x is not null and city=#{city}
+
+	</select>
+
+
+	<select id="queryPoiAliasByCity" parameterType="String"
+			resultMap="defaultResultMap">
+		SELECT DATAID,EXTEND_ALIAS FROM BK13_T_LE_NEWALIAS_0129 where city=#{city}
+	</select>
+
+
+	<insert id="hotPoiBatchInsert"
+			parameterType="java.util.List">
+
+		insert into BK_TYB_LOG_HOT_POI_STATISTIC (QUERY ,CITY ,NUM ,POINT,TIME)
+
+		<foreach collection="list"  item="item" index="index" separator="union all">
+			select
+			#{item.normalizeQuery,jdbcType=VARCHAR},
+			#{item.city,jdbcType=VARCHAR},
+			#{item.num,jdbcType=INTEGER},
+			#{item.point,jdbcType=VARCHAR},
+			#{item.date,jdbcType=DATE}
+			from dual
+		</foreach>
+	</insert>
+
+	<select id="hotPoiStatistic" resultType="log">
+	SELECT query as normalizeQuery,city,num,time FROM BK_TYB_LOG_HOT_POI_STATISTIC
+	</select>
+
+
+	<insert id="invalidLogBatchInsert"
+			parameterType="java.util.List">
+
+		insert into BK_TYB_INVALID_LOG_ANALYZE (DID,USER_ID ,TYPE ,CITY ,ORIGINAL_QUERY ,TSOURCE ,TIME ,DETAIL )
+
+		<foreach collection="list"  item="item" index="index" separator="union all">
+			select
+			#{item.did,jdbcType=VARCHAR},
+			#{item.userId,jdbcType=VARCHAR},
+			#{item.type,jdbcType=INTEGER},
+			#{item.city,jdbcType=VARCHAR},
+			#{item.originalQuery,jdbcType=VARCHAR},
+			#{item.tsource,jdbcType=INTEGER},
+			#{item.date,jdbcType=DATE},
+			#{item.detail,jdbcType=VARCHAR}
+			from dual
+		</foreach>
+	</insert>
+
+
+
+
+</mapper>

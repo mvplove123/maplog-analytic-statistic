@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+<title>Contacts</title>
+<link rel='stylesheet' href='../css/style.css' />
+<link rel='stylesheet' href='../css/bootstrap.min.css' />
+</head>
+<body ng-controller='AppCtrl'>
+
+	<div class="navbar navbar-fixed-top" ng-controller="NavBarController">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" href="#">Project</a>
+				<div class="nav-collapse">
+					<ul class="nav nav-tabs">
+						<li><a href="../index.html">首页</a></li>
+						<li class="active"><a href="/typehead/init.html">初始化</a></li>
+						<li><a href="/typehead/search.html">Search</a></li>
+						<li><a href="/#/advanced">索引新增</a></li>
+						<li><a href="/#/compute">索引删除</a></li>
+					</ul>
+				</div>
+				<!-- /.nav-collapse -->
+			</div>
+		</div>
+		<!-- /navbar-inner -->
+	</div>
+
+	<div class="container">
+		<form class="form-inline" role="form">
+			<div class="form-group span12 row-margin-top">
+				<label>Nums:</label><input id="limitNum" type="text"
+					class="input-medium search-query span3"
+					placeholder="Number of hotelanalyse to inject" autocomplete="off">
+				<input type="button" onclick="init()" value="Inject"
+					style="width: 60px;" class="btn btn-primary span2"> <span
+					class="badge badge-success" id="injectResult"></span>
+			</div>
+		</form>
+
+
+	</div>
+	<script type="text/javascript" src="../js/lib/jquery/jquery.js"></script>
+	<script type="text/javascript"
+		src="../js/lib/bootstrap/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../js/typehead.js"></script>
+</body>
+</html>

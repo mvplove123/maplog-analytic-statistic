@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="log_statistic_mapper">
+
+	<resultMap id="defalutLogResult" type="log">
+
+		<result property="normalizeQuery" column="NORMALIZE_QUERY" />
+		<result property="isDidValid" column="IS_DIDVALID" />
+		<result property="caption" column="CAPTION" />
+		<result property="num" column="NUM" />
+		<result property="subCategory" column="SUB_CATEGORY" />
+		<result property="dataId" column="DATA_ID"/>
+	</resultMap>
+
+
+
+
+	<select id="getHotPoiList" parameterType="log"
+		resultType="log">
+		<![CDATA[
+		SELECT
+			NORMALIZE_QUERY as  normalizeQuery,
+			COUNT (1) num
+		FROM
+			BK_TYB_LOG_ANALYZE
+			WHERE TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd')
+		GROUP BY
+			NORMALIZE_QUERY
+		ORDER BY
+			num DESC
+			]]>
+	</select>
+
+
+
+	<select id="getHotPoiInfo" parameterType="String"
+			resultType="log">
+	select city,time from  BK_TYB_LOG_ANALYZE where rownum=1
+	</select>
+
+	<select id="getHotPoiCount" parameterType="log"
+			resultType="log">
+		<![CDATA[
+		select COUNT(DISTINCT(user_id)) num from  BK_TYB_LOG_ANALYZE 	WHERE TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd') AND NORMALIZE_QUERY = #{normalizeQuery}
+	]]>
+	</select>
+
+
+	<select id="getAllCount" resultType="log">
+		<![CDATA[
+		select count(1) num from BK_TYB_LOG_ANALYZE WHERE TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd') and NORMALIZE_QUERY not in('停车场','[位置]')
+			]]>
+	</select>
+
+
+	<select id="getPoiTypeStatistic" parameterType="log" resultType="log">
+		<![CDATA[
+		SELECT
+			TYPE,
+			COUNT (*) num
+		FROM
+			BK_TYB_LOG_ANALYZE
+		WHERE
+		TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd') AND NORMALIZE_QUERY = #{normalizeQuery}
+		GROUP BY
+			TYPE
+		ORDER BY
+			TYPE ASC
+	]]>
+	</select>
+
+
+	<select id="getPoiSourceStatistic" parameterType="log" resultType="log">
+
+
+		SELECT
+		TSOURCE,
+		COUNT (*) num
+		FROM
+		BK_TYB_LOG_ANALYZE
+		<where>
+			<if test="type != null">
+				type = #{type}
+			</if>
+			<if test="type == null">
+				type is null
+			</if>
+		and NORMALIZE_QUERY=#{normalizeQuery} and <![CDATA[ TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd')	]]>
+
+		</where>
+
+		GROUP BY
+		TSOURCE
+		ORDER BY
+		TSOURCE ASC
+
+	</select>
+
+
+	<insert id="logBatchInsert"
+			parameterType="java.util.List">
+
+		insert into BK_TYB_LOG_ANALYZE (ID,DID,USER_ID ,TYPE ,CITY ,UNIQUE_ID,DATA_ID,ORIGINAL_QUERY ,NORMALIZE_QUERY,POINT,TSOURCE ,IS_DIDVALID,VERSION,CLASSIFY,CATEGORY,SUB_CATEGORY, TIME ,DETAIL)
+
+		select IANALYZE_SEQUENCE.nextval,A.* from (
+		<foreach collection="list"  item="item" index="index" separator="union all">
+			select
+			#{item.did,jdbcType=VARCHAR},
+			#{item.userId,jdbcType=VARCHAR},
+			#{item.type,jdbcType=INTEGER},
+			#{item.city,jdbcType=VARCHAR},
+			#{item.uniqueId,jdbcType=VARCHAR},
+			#{item.dataId,jdbcType=VARCHAR},
+			#{item.originalQuery,jdbcType=VARCHAR},
+			#{item.normalizeQuery,jdbcType=VARCHAR},
+			#{item.point,jdbcType=VARCHAR},
+			#{item.tsource,jdbcType=INTEGER},
+			#{item.isDidValid,jdbcType=INTEGER},
+			#{item.version,jdbcType=INTEGER},
+			#{item.classify,jdbcType=VARCHAR},
+			#{item.category,jdbcType=VARCHAR},
+			#{item.subCategory,jdbcType=VARCHAR},
+			#{item.date,jdbcType=DATE},
+			#{item.detail,jdbcType=VARCHAR}
+			 from dual
+		</foreach>
+		) A
+	</insert>
+
+
+	<select id="catePoiStatistic" resultMap="defalutLogResult">
+
+		SELECT NORMALIZE_QUERY,CASE WHEN IS_DIDVALID = 0 THEN NULL else IS_DIDVALID END as IS_DIDVALID,count(1) NUM FROM BK_TYB_LOG_ANALYZE GROUP BY NORMALIZE_QUERY, CASE WHEN IS_DIDVALID = 0 THEN NULL else IS_DIDVALID END  order by NORMALIZE_QUERY
+
+	</select>
+
+	<select id="didPoiStatistic" resultMap="defalutLogResult">
+
+	SELECT DATA_ID,NORMALIZE_QUERY,CATEGORY,SUB_CATEGORY,count(1) NUM FROM BK_TYB_LOG_ANALYZE where IS_DIDVALID=1 GROUP BY DATA_ID,NORMALIZE_QUERY,CATEGORY,SUB_CATEGORY
+
+	</select>
+
+
+</mapper>

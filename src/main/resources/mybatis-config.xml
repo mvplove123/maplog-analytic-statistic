@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 命名空间-->
+    <typeAliases>
+        <typeAlias alias="statisticReport" type="com.jerry.map.model.StatisticReport"/>
+        <typeAlias alias="log" type="com.jerry.map.model.Log"/>
+        <typeAlias alias="poi" type="com.jerry.map.model.Poi"/>
+        <typeAlias type="oracle.spatial.geometry.JGeometry" alias="JGeometry"/>
+
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.jerry.map.dao.SdoGeometryTypeHandler" javaType="JGeometry"/>
+    </typeHandlers>
+    <!-- 映射map -->
+    <mappers>
+        <mapper resource="mapper/log_statistic_mapper.xml"/>
+        <mapper resource="mapper/log_analysis_mapper.xml"/>
+
+    </mappers>
+</configuration>
