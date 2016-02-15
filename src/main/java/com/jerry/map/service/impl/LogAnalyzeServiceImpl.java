@@ -12,22 +12,13 @@ import com.jerry.map.service.AbstractService;
 import com.jerry.map.service.BasicDataService;
 import com.jerry.map.service.LogAnalyzeService;
 import com.jerry.map.utils.*;
-import oracle.spatial.geometry.JGeometry;
-import oracle.sql.STRUCT;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.SQLException;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -184,7 +175,7 @@ public class LogAnalyzeServiceImpl extends AbstractService implements LogAnalyze
             if (cateMap.get(log.getNormalizeQuery()) != null) {
                 log.setClassify(cateMap.get(log.getNormalizeQuery()));
             } else {
-                log.setClassify(ExcelCommon.POI);
+                log.setClassify(Constants.POI);
             }
 
         }

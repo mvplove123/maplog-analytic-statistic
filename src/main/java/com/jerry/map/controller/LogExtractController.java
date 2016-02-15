@@ -15,18 +15,39 @@ import java.util.Map;
 @RequestMapping("logExtract")
 public class LogExtractController extends AbstractController {
 
-    @Resource
-    private LogExtractService logExtractService;
+    @Resource(name = "searchLogExtractServiceImpl")
+    private LogExtractService searchLogExtractService;
+
+    @Resource(name = "busLogExtractServiceImpl")
+    private LogExtractService busLogExtractService;
+
+    @Resource(name = "walkLogExtractServiceImpl")
+    private LogExtractService walkLogExtractService;
 
     @ResponseBody
-    @RequestMapping(value = "commonLogExtract")
-    public Map<Object, Object> commonLogExtract(){
+    @RequestMapping(value = "searchLogExtract")
+    public Map<Object, Object> searchLogExtract(){
 
-        logExtractService.logExtractByCity();
-        return dataJson("日志提取完成");
-
+        searchLogExtractService.logExtractByCity();
+        return dataJson("searchLog日志提取完成");
 
     }
 
+    @ResponseBody
+    @RequestMapping(value = "busLogExtract")
+    public Map<Object, Object> busLogExtract(){
 
+        busLogExtractService.logExtractByCity();
+        return dataJson("busLog日志提取完成");
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "walkLogExtract")
+    public Map<Object, Object> walkLogExtract(){
+
+        walkLogExtractService.logExtractByCity();
+        return dataJson("walkLog日志提取完成");
+
+    }
 }

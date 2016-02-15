@@ -1,7 +1,7 @@
 package com.jerry.map.service.impl;
 
 import com.google.common.collect.Maps;
-import com.jerry.map.utils.ExcelCommon;
+import com.jerry.map.utils.Constants;
 import com.jerry.map.utils.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -14,7 +14,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -311,27 +310,27 @@ public class XssfSheetHandler extends DefaultHandler {
 
 
         if (StringUtils.isNotEmpty(catFirstLevel)) {
-            cateMap.put(catFirstLevel, ExcelCommon.CATEGORY);
+            cateMap.put(catFirstLevel, Constants.CATEGORY);
         }
         if (StringUtils.isNotEmpty(catSecondLevel)) {
-            cateMap.put(catSecondLevel, ExcelCommon.CATEGORY);
+            cateMap.put(catSecondLevel, Constants.CATEGORY);
         }
         if (StringUtils.isNotEmpty(catThirdLevel)) {
-            cateMap.put(catThirdLevel, ExcelCommon.CATEGORY);
+            cateMap.put(catThirdLevel, Constants.CATEGORY);
         }
         if (StringUtils.isNotEmpty(catForthLevel)) {
-            cateMap.put(catForthLevel, ExcelCommon.BRAND);
+            cateMap.put(catForthLevel, Constants.BRAND);
         }
 
         if (StringUtils.isNotEmpty(catSynonyms)) {
             List<String> synonyms = WordUtils.str2List(catSynonyms, "-");
             if (StringUtils.isNotEmpty(catForthLevel)) {
                 for (String synonym : synonyms) {
-                    cateMap.put(WordUtils.normalize(synonym), ExcelCommon.BRAND);
+                    cateMap.put(WordUtils.normalize(synonym), Constants.BRAND);
                 }
             } else {
                 for (String synonym : synonyms) {
-                    cateMap.put(WordUtils.normalize(synonym), ExcelCommon.CATEGORY);
+                    cateMap.put(WordUtils.normalize(synonym), Constants.CATEGORY);
                 }
             }
         }

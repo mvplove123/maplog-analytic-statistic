@@ -3,7 +3,7 @@ package com.jerry.map.utils;
 /**
  * Created by admin on 2016/1/22.
  */
-public class ExcelCommon {
+public class Constants {
     public static final String OFFICE_EXCEL_2003_POSTFIX = "xls";
     public static final String OFFICE_EXCEL_2010_POSTFIX = "xlsx";
 
@@ -18,4 +18,10 @@ public class ExcelCommon {
     public static final String CATEGORY = "category";
     public static final String BRAND = "brand";
     public static final String POI = "poi";
+
+    public static final Integer SEARCH_LOG = 0;
+    public static final Integer BUS_LOG = 1;
+    public static final Integer WALK_LOG = 2;
+
+
 }

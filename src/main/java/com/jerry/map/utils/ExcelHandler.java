@@ -5,7 +5,6 @@ package com.jerry.map.utils;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -17,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 public class ExcelHandler {
 
@@ -28,18 +26,18 @@ public class ExcelHandler {
      * @throws IOException
      */
     public List<T> readExcel(String path) throws IOException {
-        if (path == null || ExcelCommon.EMPTY.equals(path)) {
+        if (path == null || Constants.EMPTY.equals(path)) {
             return null;
         } else {
             String postfix = getPostfix(path);
-            if (!ExcelCommon.EMPTY.equals(postfix)) {
-                if (ExcelCommon.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
+            if (!Constants.EMPTY.equals(postfix)) {
+                if (Constants.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
                     return readXls(path);
-                } else if (ExcelCommon.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
+                } else if (Constants.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
                     return readXlsx(path);
                 }
             } else {
-                System.out.println(path + ExcelCommon.NOT_EXCEL_FILE);
+                System.out.println(path + Constants.NOT_EXCEL_FILE);
             }
         }
         return null;
@@ -52,7 +50,7 @@ public class ExcelHandler {
      * @throws IOException
      */
     public List<T> readXlsx(String path) throws IOException {
-        System.out.println(ExcelCommon.PROCESSING + path);
+        System.out.println(Constants.PROCESSING + path);
         InputStream is = new FileInputStream(path);
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
         // Read the Sheet
@@ -88,7 +86,7 @@ public class ExcelHandler {
      * @throws IOException
      */
     public List<T> readXls(String path) throws IOException {
-        System.out.println(ExcelCommon.PROCESSING + path);
+        System.out.println(Constants.PROCESSING + path);
         InputStream is = new FileInputStream(path);
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
         // Read the Sheet
@@ -146,13 +144,13 @@ public class ExcelHandler {
      * @return
      */
     public static String getPostfix(String path) {
-        if (path == null || ExcelCommon.EMPTY.equals(path.trim())) {
-            return ExcelCommon.EMPTY;
+        if (path == null || Constants.EMPTY.equals(path.trim())) {
+            return Constants.EMPTY;
         }
-        if (path.contains(ExcelCommon.POINT)) {
-            return path.substring(path.lastIndexOf(ExcelCommon.POINT) + 1, path.length());
+        if (path.contains(Constants.POINT)) {
+            return path.substring(path.lastIndexOf(Constants.POINT) + 1, path.length());
         }
-        return ExcelCommon.EMPTY;
+        return Constants.EMPTY;
     }
 
 

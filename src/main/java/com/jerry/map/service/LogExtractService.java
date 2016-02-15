@@ -9,6 +9,6 @@ public interface LogExtractService {
     /**
      * 提取指定城市log日志
      */
-    public void logExtractByCity();
+    void logExtractByCity();
 
 }
