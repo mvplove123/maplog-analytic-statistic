@@ -54,6 +54,8 @@ public class Log {
 
     private Integer version;
 
+    private String logSource;
+
     public Integer getId() {
         return id;
     }
@@ -238,5 +240,13 @@ public class Log {
 
     public void setPoint(String point) {
         this.point = point;
+    }
+
+    public String getLogSource() {
+        return logSource;
+    }
+
+    public void setLogSource(String logSource) {
+        this.logSource = logSource;
     }
 }

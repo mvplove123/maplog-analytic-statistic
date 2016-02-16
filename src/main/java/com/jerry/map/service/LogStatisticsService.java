@@ -11,15 +11,14 @@ import java.util.List;
 public interface LogStatisticsService {
 
 
-    public List<StatisticReport> createReport(String time);
+    List<StatisticReport> createReport(String time);
 
-    public void hotPoiStatistic(String time , String city);
+    void hotPoiStatistic(String time, String city);
 
+    void hotPoiOccupies();
 
-    public void hotPoiOccupies();
+    void catePoiStatistic();
 
-    public void catePoiStatistic();
-
-    public void didPoiStatistic();
+    void didPoiStatistic();
 
 }

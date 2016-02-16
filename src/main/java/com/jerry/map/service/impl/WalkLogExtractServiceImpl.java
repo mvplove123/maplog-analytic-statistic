@@ -1,5 +1,6 @@
 package com.jerry.map.service.impl;
 
+import com.jerry.map.model.Log;
 import com.jerry.map.service.LogExtractService;
 import com.jerry.map.utils.Constants;
 import com.jerry.map.utils.PropertiesUtils;
@@ -20,5 +21,14 @@ public class WalkLogExtractServiceImpl implements LogExtractService {
         String city = PropertiesUtils.getPropertiesValue("city");
 
         commonLogExtractService.logExtractByCity(city,"commonPath", Constants.WALK_LOG);
+    }
+
+    /**
+     * walk log parse
+     * @param line
+     * @return
+     */
+    public Log logParseByCity(String line) {
+        return null;
     }
 }

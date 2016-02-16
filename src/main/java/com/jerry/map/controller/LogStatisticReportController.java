@@ -1,7 +1,7 @@
 package com.jerry.map.controller;
 
 
-import com.jerry.map.service.LogAnalyzeService;
+import com.jerry.map.service.LogParseService;
 import com.jerry.map.service.LogStatisticsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class LogStatisticReportController extends AbstractController {
     private LogStatisticsService logStatisticsService;
 
     @Resource
-    private LogAnalyzeService logAnalyzeService;
+    private LogParseService logParseService;
 
     @ResponseBody
     @RequestMapping(value = "createReport")
@@ -37,7 +37,7 @@ public class LogStatisticReportController extends AbstractController {
     @RequestMapping(value = "logAnalyze")
     public Map<Object, Object> logAnalyze() {
         try {
-            logAnalyzeService.logParse();
+            logParseService.logParse();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +63,7 @@ public class LogStatisticReportController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = "splitWord")
     public Map<Object, Object> splitWord() {
-        logAnalyzeService.splitWord();
+        logParseService.splitWord();
         return dataJson("热门poi分词完成");
     }
 

@@ -1,7 +1,6 @@
 package com.jerry.map.service.impl;
 
 import com.jerry.map.service.AbstractService;
-import com.jerry.map.service.LogExtractService;
 import com.jerry.map.utils.FileHandler;
 import com.jerry.map.utils.PropertiesUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,23 +20,28 @@ import java.util.regex.Pattern;
 @Service
 public class CommonLogExtractServiceImpl extends AbstractService {
 
+
+    private String threadNum = PropertiesUtils.getPropertiesValue("threadNum");
+
+
     public void logExtractByCity(final String targetCity, String pathName, final Integer source) {
 
-
+        final String regSearch = ".*what=.*city=(.*)$";
+        final String regBus = ".*[REQ].*bus.transfer.plan.*tactic.*city=(.*)$";
+        final String searchCharset = "gb18030";
+        final String busCharset = "utf-8";
         String path = PropertiesUtils.getPropertiesValue(pathName);
-        final String targetPath = path+targetCity+File.separator;
+        final String targetPath = path + targetCity + File.separator;
         FileHandler.mkdirs(targetPath);
 
-
-
-        ExecutorService service = Executors.newFixedThreadPool(5);
+        ExecutorService service = Executors.newFixedThreadPool(Integer.valueOf(threadNum));
 
         File fileList = new File(path);
         File[] files = fileList.listFiles();
 
         for (final File file : files) {
 
-            if(!file.isFile()){
+            if (!file.isFile()) {
                 continue;
             }
 
@@ -46,15 +50,14 @@ public class CommonLogExtractServiceImpl extends AbstractService {
                 public void run() {
 
                     switch (source) {
-
                         case 0:
-                            searchExtract(file, targetCity,targetPath);
+                            extract(file, targetCity, targetPath, regSearch, searchCharset);
                             break;
                         case 1:
-                            busExtract(file, targetCity,targetPath);
+                            extract(file, targetCity, targetPath, regBus, busCharset);
                             break;
                         case 2:
-                            walkExtract(file, targetCity,targetPath);
+                            walkExtract(file, targetCity, targetPath);
                             break;
                     }
                 }
@@ -69,27 +72,26 @@ public class CommonLogExtractServiceImpl extends AbstractService {
     }
 
 
-    private void searchExtract(File file, String targetCity,String targetPath) {
+    private void extract(File file, String targetCity, String targetPath, String regEx, String charset) {
 
         String filePath = file.getPath();
         String fileName = file.getName();
         long begin = System.currentTimeMillis();
         logger.info("{}文件，提取开始", fileName);
-        String targetFilePath = targetPath+fileName;
+        String targetFilePath = targetPath + fileName;
         BufferedReader result;
         BufferedWriter writer = null;
 
         try {
             writer = new BufferedWriter(new FileWriter(targetFilePath));
-            result = FileHandler.getReader(filePath, "gb18030");
-            String regEx = ".*what=(.*?)}?&.*city=(.*)$";//城市
+            result = FileHandler.getReader(filePath, charset);
             Pattern p = Pattern.compile(regEx);
             String line = null;
 
             while ((line = result.readLine()) != null) {
                 Matcher m = p.matcher(line);
                 if (m.matches()) {
-                    String city = m.group(2);
+                    String city = m.group(1);
                     if (StringUtils.isNotEmpty(city) && targetCity.contains(city)) {
                         writer.write(line);
                         writer.newLine();
@@ -112,92 +114,16 @@ public class CommonLogExtractServiceImpl extends AbstractService {
     }
 
 
-    private void busExtract(File file, String targetCity,String targetPath) {
+    private void walkExtract(File file, String targetCity, String targetPath) {
 
         String filePath = file.getPath();
         String fileName = file.getName();
-        long begin = System.currentTimeMillis();
         logger.info("{}文件，提取开始", fileName);
 
         BufferedReader result;
         BufferedWriter writer = null;
-        String targetFilePath = targetPath+fileName;
+        String targetFilePath = targetPath + fileName;
 
-
-        try {
-            writer = new BufferedWriter(new FileWriter(targetFilePath));
-            result = FileHandler.getReader(filePath, "utf-8");
-            String regEx = ".*what=(.*?)}?&.*city=(.*)$";//城市
-            Pattern p = Pattern.compile(regEx);
-            String line = null;
-
-            while ((line = result.readLine()) != null) {
-                Matcher m = p.matcher(line);
-                if (m.matches()) {
-                    String city = m.group(2);
-                    if (StringUtils.isNotEmpty(city) && targetCity.contains(city)) {
-                        writer.write(line);
-                        writer.newLine();
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.close();
-                long end = System.currentTimeMillis();
-                logger.info("{}文件提取完成，用时{}", fileName, (end - begin));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
-
-    private void walkExtract(File file, String targetCity,String targetPath) {
-
-        String filePath = file.getPath();
-        String fileName = file.getName();
-        long begin = System.currentTimeMillis();
-        logger.info("{}文件，提取开始", fileName);
-
-        BufferedReader result;
-        BufferedWriter writer = null;
-        String targetFilePath = targetPath+fileName;
-
-        try {
-            writer = new BufferedWriter(new FileWriter(targetFilePath));
-            result = FileHandler.getReader(filePath, "gb18030");
-            String regEx = ".*what=(.*?)}?&.*city=(.*)$";//城市
-            Pattern p = Pattern.compile(regEx);
-            String line = null;
-
-            while ((line = result.readLine()) != null) {
-                Matcher m = p.matcher(line);
-                if (m.matches()) {
-                    String city = m.group(2);
-                    if (StringUtils.isNotEmpty(city) && targetCity.contains(city)) {
-                        writer.write(line);
-                        writer.newLine();
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.close();
-                long end = System.currentTimeMillis();
-                logger.info("{}文件提取完成，用时{}", fileName, (end - begin));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
 }

@@ -1,5 +1,6 @@
 package com.jerry.map.service.impl;
 
+import com.jerry.map.model.Log;
 import com.jerry.map.service.AbstractService;
 import com.jerry.map.service.LogExtractService;
 import com.jerry.map.utils.Constants;
@@ -31,10 +32,18 @@ public class BusLogExtractServiceImpl extends AbstractService implements LogExtr
     public void logExtractByCity() {
 
         String city = PropertiesUtils.getPropertiesValue("city");
-        commonLogExtractService.logExtractByCity(city,"commonPath", Constants.BUS_LOG);
+        commonLogExtractService.logExtractByCity(city,"busLogPath", Constants.BUS_LOG);
 
     }
 
+    /**
+     * bus log parse
+     * @param line
+     * @return
+     */
+    public Log logParseByCity(String line) {
+        return null;
+    }
 
 
 }

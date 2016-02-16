@@ -8,13 +8,11 @@ import java.io.UnsupportedEncodingException;
  * Created by admin on 2016/1/7.
  */
 
-public interface LogAnalyzeService {
+public interface LogParseService {
+
+    void logParse() throws IOException;
 
 
-
-    public void logParse() throws IOException;
-
-    public void splitWord();
 
 
 }
