@@ -1,10 +1,7 @@
 package com.jerry.map.service.impl;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.jerry.map.dao.LogAnalyzeDao;
 import com.jerry.map.dao.LogStatisticsDao;
 import com.jerry.map.model.Log;
 import com.jerry.map.model.Poi;
@@ -12,21 +9,17 @@ import com.jerry.map.service.AbstractService;
 import com.jerry.map.service.BasicDataService;
 import com.jerry.map.service.LogExtractService;
 import com.jerry.map.service.LogParseService;
-import com.jerry.map.utils.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.jerry.map.utils.Constants;
+import com.jerry.map.utils.FileHandler;
+import com.jerry.map.utils.PropertiesUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by admin on 2016/1/7.
@@ -85,11 +78,15 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
             File fileList = new File(path);
             File[] files = fileList.listFiles();
 
+            if(files == null){
+                continue;
+            }
+
             for (File file : files) {
                 String filePath = file.getPath();
                 String fileName = file.getName();
                 logger.info("{}文件，解析开始", fileName);
-                readFile(filePath, logSource);
+                readFile(filePath, logSource, city);
             }
             long end1time = System.currentTimeMillis();
             logger.info("所有文件，解析结束，用时：", (end1time - begintime));
@@ -105,7 +102,7 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
      * @param filePath
      * @return
      */
-    private List<String> readFile(String filePath, Integer logSource) {
+    private List<String> readFile(String filePath, Integer logSource, String targetCity) {
 
         BufferedReader result = null;
         try {
@@ -123,39 +120,33 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
 
             while ((line = result.readLine()) != null) {
 
-                Log log = null;
+                List<Log> logs = null;
 
                 switch (logSource) {
                     case 0:
-                        log = searchLogExtractService.logParseByCity(line);
-                        if (log != null) {
-                            log.setLogSource("search");
-                        }
+                        logs = searchLogExtractService.logParseByCity(line, targetCity,"search");
                         break;
                     case 1:
-                        log = busLogExtractService.logParseByCity(line);
-                        if (log != null) {
-                            log.setLogSource("bus");
-                        }
+                        logs = busLogExtractService.logParseByCity(line, targetCity,"bus");
                         break;
                     case 2:
-                        log = walkLogExtractService.logParseByCity(line);
-                        if (log != null) {
-                            log.setLogSource("walk");
-                        }
+                        logs = walkLogExtractService.logParseByCity(line, targetCity,"walk");
                         break;
                 }
 
-                if (log == null) {
+                if (CollectionUtils.isEmpty(logs)) {
                     continue;
                 }
-                log.setDetail(line);
-                if (log.getIsValid() != null && !log.getIsValid()) {
-                    invalidLogs.add(log);
-                    continue;
-                }
-                validLogs.add(log);
 
+                for(Log log : logs){
+
+                    log.setDetail(line);
+                    if (log.getIsValid() != null && !log.getIsValid()) {
+                        invalidLogs.add(log);
+                        continue;
+                    }
+                    validLogs.add(log);
+                }
             }
             result.close();
 

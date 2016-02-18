@@ -2,6 +2,8 @@ package com.jerry.map.service;
 
 import com.jerry.map.model.Log;
 
+import java.util.List;
+
 /**
  * Created by admin on 2016/2/2.
  */
@@ -16,12 +18,11 @@ public interface LogExtractService {
 
     /**
      * 解析log 字段
+     *
      * @param line
      * @return
      */
-    Log logParseByCity(String line);
-
-
+    List<Log> logParseByCity(String line, String targetCity ,String logSource);
 
 
 }

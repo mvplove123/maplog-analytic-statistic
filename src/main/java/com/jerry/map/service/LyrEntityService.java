@@ -6,8 +6,4 @@ package com.jerry.map.service;
 public interface LyrEntityService {
 
 
-
-
-
-
 }

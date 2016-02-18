@@ -7,6 +7,7 @@ import com.jerry.map.utils.PropertiesUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by admin on 2016/2/15.
@@ -17,18 +18,20 @@ public class WalkLogExtractServiceImpl implements LogExtractService {
 
     @Resource
     private CommonLogExtractServiceImpl commonLogExtractService;
+
     public void logExtractByCity() {
         String city = PropertiesUtils.getPropertiesValue("city");
 
-        commonLogExtractService.logExtractByCity(city,"commonPath", Constants.WALK_LOG);
+        commonLogExtractService.logExtractByCity(city, "commonPath", Constants.WALK_LOG);
     }
 
     /**
      * walk log parse
+     *
      * @param line
      * @return
      */
-    public Log logParseByCity(String line) {
+    public List<Log> logParseByCity(String line, String targetCity, String logSource) {
         return null;
     }
 }

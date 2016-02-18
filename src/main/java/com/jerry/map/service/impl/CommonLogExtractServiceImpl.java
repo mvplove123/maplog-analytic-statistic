@@ -83,7 +83,9 @@ public class CommonLogExtractServiceImpl extends AbstractService {
         BufferedWriter writer = null;
 
         try {
-            writer = new BufferedWriter(new FileWriter(targetFilePath));
+
+            OutputStreamWriter  outputStreamWriter  = new OutputStreamWriter(new FileOutputStream(targetFilePath),"gb18030");
+            writer = new BufferedWriter(outputStreamWriter);
             result = FileHandler.getReader(filePath, charset);
             Pattern p = Pattern.compile(regEx);
             String line = null;

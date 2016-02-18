@@ -10,6 +10,7 @@ import com.jerry.map.service.AbstractService;
 import com.jerry.map.service.LogAnalysisService;
 import com.jerry.map.utils.SimilarityEnum;
 import com.jerry.map.utils.WordUtils;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by admin on 2016/2/16.
  */
+@Service
 public class LogAnalysisServiceImpl extends AbstractService implements LogAnalysisService {
 
 

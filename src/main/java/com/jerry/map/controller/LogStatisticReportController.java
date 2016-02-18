@@ -1,6 +1,7 @@
 package com.jerry.map.controller;
 
 
+import com.jerry.map.service.LogAnalysisService;
 import com.jerry.map.service.LogParseService;
 import com.jerry.map.service.LogStatisticsService;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class LogStatisticReportController extends AbstractController {
 
     @Resource
     private LogParseService logParseService;
+
+    @Resource
+    private LogAnalysisService logAnalysisService;
 
     @ResponseBody
     @RequestMapping(value = "createReport")
@@ -63,7 +67,7 @@ public class LogStatisticReportController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = "splitWord")
     public Map<Object, Object> splitWord() {
-        logParseService.splitWord();
+        logAnalysisService.splitWord();
         return dataJson("热门poi分词完成");
     }
 
