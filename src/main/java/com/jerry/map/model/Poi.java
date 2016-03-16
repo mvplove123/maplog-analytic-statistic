@@ -33,6 +33,17 @@ public class Poi {
 
     private String extendAlias;
 
+    private Integer isAliasFlag;
+
+    private double lat;
+
+    private double lng;
+
+    private String keyWord;
+
+    private String classify;
+
+
     public BigInteger getUniqueId() {
         return uniqueId;
     }
@@ -111,6 +122,16 @@ public class Poi {
 
     public void setGeometry(JGeometry geometry) {
         this.geometry = geometry;
+
+        if (geometry != null) {
+            double pt[] = geometry.getPoint();
+            if (pt != null) {
+                double x = pt[0];
+                double y = pt[1];
+                String point = String.valueOf(x) + "," + String.valueOf(y);
+                setPoint(point);
+            }
+        }
     }
 
     public String getExtendAlias() {
@@ -121,6 +142,43 @@ public class Poi {
         this.extendAlias = extendAlias;
     }
 
+    public Integer getIsAliasFlag() {
+        return isAliasFlag;
+    }
 
+    public void setIsAliasFlag(Integer isAliasFlag) {
+        this.isAliasFlag = isAliasFlag;
+    }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public String getKeyWord() {
+        return keyWord;
+    }
+
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
+    public String getClassify() {
+        return classify;
+    }
+
+    public void setClassify(String classify) {
+        this.classify = classify;
+    }
 }

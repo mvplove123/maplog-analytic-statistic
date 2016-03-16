@@ -85,11 +85,11 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
             for (File file : files) {
                 String filePath = file.getPath();
                 String fileName = file.getName();
-                logger.info("{}文件，解析开始", fileName);
+                logger.info("{}文件，logSource 类型{}解析开始", fileName,logSource);
                 readFile(filePath, logSource, city);
             }
             long end1time = System.currentTimeMillis();
-            logger.info("所有文件，解析结束，用时：", (end1time - begintime));
+            logger.info("所有文件，解析结束，用时：{}", (end1time - begintime));
 
         }
 
@@ -103,6 +103,7 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
      * @return
      */
     private List<String> readFile(String filePath, Integer logSource, String targetCity) {
+        Map<String, String> cateMap = basicDataService.loadCategoryInfo();
 
         BufferedReader result = null;
         try {
@@ -155,7 +156,6 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
         }
 
         long insertTime = System.currentTimeMillis();
-        Map<String, String> cateMap = basicDataService.loadCategoryInfo();
 
         for (Log log : validLogs) {
 
@@ -174,7 +174,7 @@ public class LogParseServiceImpl extends AbstractService implements LogParseServ
         logStatisticsDao.invalidLogBatchInsert(invalidLogs);
 
         long insertFinishTime = System.currentTimeMillis();
-        logger.info("插入用时:", (insertFinishTime - insertTime));
+        logger.info("插入用时:{}", (insertFinishTime - insertTime));
 
         return loglist;
 

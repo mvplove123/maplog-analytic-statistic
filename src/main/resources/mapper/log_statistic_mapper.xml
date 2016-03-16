@@ -50,7 +50,8 @@
 
 	<select id="getAllCount" resultType="log">
 		<![CDATA[
-		select count(1) num from BK_TYB_LOG_ANALYZE WHERE TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time <=to_date(#{endTime},'YYYY-mm-dd') and NORMALIZE_QUERY not in('停车场','[位置]')
+		select count(1) num from BK_TYB_LOG_ANALYZE WHERE TIME >=to_date(#{beginTime},'YYYY-mm-dd')  and Time
+		<=to_date(#{endTime},'YYYY-mm-dd')  and NORMALIZE_QUERY not in('停车场','[位置]')
 			]]>
 	</select>
 
@@ -103,7 +104,8 @@
 			parameterType="java.util.List">
 
 		insert into BK_TYB_LOG_ANALYZE (ID,DID,USER_ID ,TYPE ,CITY ,UNIQUE_ID,DATA_ID,ORIGINAL_QUERY ,
-		NORMALIZE_QUERY,POINT,TSOURCE ,IS_DIDVALID,VERSION,CLASSIFY,CATEGORY,SUB_CATEGORY, LOG_SOURCE,TIME ,DETAIL)
+		NORMALIZE_QUERY,POINT,TSOURCE ,IS_DIDVALID,VERSION,CLASSIFY,CATEGORY,SUB_CATEGORY, LOG_SOURCE,IS_ALIASVALID,
+		TIME ,DETAIL)
 
 		select IANALYZE_SEQUENCE.nextval,A.* from (
 		<foreach collection="list"  item="item" index="index" separator="union all">
@@ -124,6 +126,7 @@
 			#{item.category,jdbcType=VARCHAR},
 			#{item.subCategory,jdbcType=VARCHAR},
 			#{item.logSource,jdbcType=VARCHAR},
+			#{item.isAliasValid,jdbcType=INTEGER},
 			#{item.date,jdbcType=DATE},
 			#{item.detail,jdbcType=VARCHAR}
 			 from dual

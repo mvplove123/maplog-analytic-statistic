@@ -211,13 +211,20 @@ public class LogStatisticsServiceImpl extends AbstractService implements LogStat
 
             Double oneRate = validNum / allcount;
             totalRate = totalRate + oneRate;
+
+
             log.setCity(city);
             log.setDate(date);
             hotlist.add(log);
 
-            if (totalRate >= 0.80) {
+            //搜索次数
+            if(validNum<30){
                 break;
             }
+
+//            if (totalRate >= 0.80) {
+//                break;
+//            }
 
         }
 
@@ -350,8 +357,8 @@ public class LogStatisticsServiceImpl extends AbstractService implements LogStat
         List<String> blackWord = Lists.newArrayList("停车场", "加油站");
 
 
-        String firstWeekDay = "2015-12-05";
-        String secondWeekDay = "2016-01-05";
+        String firstWeekDay = "2015-11-01";
+        String secondWeekDay = "2015-12-01";
         List<Log> hotPoiList = logStatisticsDao.hotPoiStatistic();
         long middle = System.currentTimeMillis();
         logger.info("查询用时,用时{}" , (middle - begin));

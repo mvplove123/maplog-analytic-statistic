@@ -56,6 +56,8 @@ public class Log {
 
     private String logSource;
 
+    private Integer isAliasValid;
+
     public Integer getId() {
         return id;
     }
@@ -248,5 +250,13 @@ public class Log {
 
     public void setLogSource(String logSource) {
         this.logSource = logSource;
+    }
+
+    public Integer getIsAliasValid() {
+        return isAliasValid;
+    }
+
+    public void setIsAliasValid(Integer isAliasValid) {
+        this.isAliasValid = isAliasValid;
     }
 }

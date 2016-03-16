@@ -10,6 +10,7 @@ import com.jerry.map.utils.PropertiesUtils;
 import com.jerry.map.utils.WordUtils;
 import oracle.spatial.geometry.JGeometry;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by admin on 2016/1/25.
@@ -75,10 +78,11 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
             return aliasPoiMap;
         }
         long begin = System.currentTimeMillis();
-        String city =PropertiesUtils.getPropertiesValue("city");
+        String city = PropertiesUtils.getPropertiesValue("city");
         logger.info("开始加载别名");
         queryPoiAliasByCity(city);
-        logger.info("结束加载别名,用时"+(System.currentTimeMillis()-begin));
+
+        logger.info("结束加载别名,用时" + (System.currentTimeMillis() - begin));
         return aliasPoiMap;
     }
 
@@ -94,11 +98,12 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
         }
         long begin = System.currentTimeMillis();
 
-        String city =PropertiesUtils.getPropertiesValue("city");
+        String city = PropertiesUtils.getPropertiesValue("city");
 
         logger.info("开始did加载poi数据");
         creatDidQueryMap(city);
-        logger.info("结束did加载poi数据 {}", (System.currentTimeMillis()-begin));
+
+        logger.info("结束did加载poi数据 ，用时：{}", (System.currentTimeMillis() - begin));
         return didMap;
     }
 
@@ -108,11 +113,85 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
      * @return
      */
     public Map<String, List<Poi>> loadPoiByQueryName() {
-        if (MapUtils.isNotEmpty(queryMap)) {
+
+        if (MapUtils.isNotEmpty(queryMap) && MapUtils.isNotEmpty(aliasPoiMap)) {
             return queryMap;
         }
-        String city =PropertiesUtils.getPropertiesValue("city");
+        long begin = System.currentTimeMillis();
+
+        logger.info("开始queryName加载poi数据");
+
+        String city = PropertiesUtils.getPropertiesValue("city");
         creatDidQueryMap(city);
+        loadPoiAliasByCity();
+
+        String regBracket = ".*(\\(.*?\\))";
+        Pattern p = Pattern.compile(regBracket);
+        loadPoiAliasByCity();
+        for (String dataId : aliasPoiMap.keySet()) {
+
+
+            Poi poi = didMap.get(dataId);
+            if(poi == null){
+                continue;
+            }
+            String caption = poi.getCaption();
+            String bracketContent="";
+            Matcher m = p.matcher(caption);
+            if(m.matches()){
+                bracketContent = m.group(1);
+            }
+
+            Poi aliasPoi = aliasPoiMap.get(dataId);
+            String extendAlias = aliasPoi.getExtendAlias();
+
+            List<String[]> a = Lists.newArrayList();
+
+            String[] bigCate = extendAlias.split("##");
+
+            for (String str : bigCate) {
+                String[] smallCate = str.split("\\|");
+                for (int i = 0; i < smallCate.length; i++) {
+                    if (smallCate[i].equals("null")) {
+                        smallCate[i] = "";
+                    }
+                }
+                a.add(smallCate);
+            }
+
+            while (a.size() >= 2) {
+
+                String[] a0 = a.get(0);
+                String[] a1 = a.get(1);
+
+                String[] temp = new String[a0.length * a1.length];
+                int k = 0;
+                for (String str0 : a0) {
+                    for (String str1 : a1) {
+                        temp[k] = str0 + str1;
+                        k++;
+                    }
+                }
+                a.remove(0);
+                a.set(0, temp);
+            }
+            String[] extendAliasList = a.get(0);
+
+            for(String alias:extendAliasList){
+                List<Poi> pois = Lists.newArrayList();
+                poi.setIsAliasFlag(1);
+                pois.add(poi);
+                queryMap.put(alias+bracketContent,pois);
+            }
+
+
+        }
+
+
+        logger.info("结束queryName加载poi数据 ，用时{}", (System.currentTimeMillis() - begin));
+
+
+
         return queryMap;
     }
 
@@ -204,6 +283,10 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
 
     private void queryPoiAliasByCity(String city) {
 
+        if(MapUtils.isNotEmpty(aliasPoiMap)){
+            return;
+        }
+
         List<Poi> poiList = logAnalyzeDao.queryPoiAliasByCity(city);
 
         for (Poi poi : poiList) {
@@ -215,11 +298,16 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
 
 
     private void creatDidQueryMap(String city) {
+
+        if(MapUtils.isNotEmpty(didMap) && MapUtils.isNotEmpty(queryMap)){
+            return;
+        }
+
         long begintime = System.currentTimeMillis();
 
-        logger.info("开去读取城市{}的poi全量数据",city);
+        logger.info("开始读取城市{}的poi全量数据", city);
         List<Poi> wordList = logAnalyzeDao.queryPoiByCity(city);
-        logger.info("结束读取城市{}的poi全量数据，用时{}", city,(System.currentTimeMillis()-begintime));
+        logger.info("结束读取城市{}的poi全量数据，用时{}", city, (System.currentTimeMillis() - begintime));
 
         for (Poi word : wordList) {
 
@@ -234,8 +322,8 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
                 }
             }
 
-            String norCaption = WordUtils.normalize(word.getCaption());
 
+            String norCaption = WordUtils.normalize(word.getCaption());
             if (CollectionUtils.isNotEmpty(queryMap.get(norCaption))) {
                 List<Poi> pois = queryMap.get(norCaption);
                 pois.add(word);
@@ -254,13 +342,12 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
     }
 
 
-    public void createFileDict(String city){
+    public void createFileDict(String city) {
 
         try {
-            BufferedWriter writer =  new BufferedWriter(new FileWriter("d:/result1.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("d:/result1.txt"));
 
             List<Poi> wordList = logAnalyzeDao.queryPoiByCity(city);
-
 
 
             for (Poi word : wordList) {
@@ -284,15 +371,44 @@ public class BasicDataServiceImpl extends AbstractService implements BasicDataSe
         }
 
 
-
     }
 
 
     public static void main(String[] args) {
-        BasicDataServiceImpl test = new BasicDataServiceImpl();
-        Map<String, String> map = test.loadCategoryInfo();
 
-        System.out.println(map);
+//        String extendAlias="方正|方程|null##汽车|轿车##装饰##美容中心|美容店中心";
+//        List<String[]> a=Lists.newArrayList();
+//
+//        String[] cate = extendAlias.split("##");
+//
+//        for(String str : cate){
+//            String[] brand = str.split("\\|");
+//            for(int i=0;i<brand.length;i++){
+//                if(brand[i].equals("null")){
+//                    brand[i]="";
+//                }
+//            }
+//            a.add(brand);
+//        }
+//
+//        while(a.size()>=2){
+//
+//            String[] a0 = a.get(0);
+//            String[] a1 = a.get(1);
+//
+//            String [] temp = new String[a0.length*a1.length];
+//            int k=0;
+//            for(String str0:a0){
+//                for(String str1 : a1){
+//                     temp[k] = str0+str1;
+//                    k++;
+//                }
+//            }
+//            a.remove(0);
+//            a.set(0,temp);
+//        }
+//
+//        System.out.println(a);
     }
 
 

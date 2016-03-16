@@ -12,15 +12,56 @@
 		<result property="subCategory" column="SUBCATEGORY" />
 		<result property="extendAlias" column="EXTEND_ALIAS"/>
 		<result property="alias" column="ALIAS"/>
-
+		<result property="address" column="ADDRESS"/>
+		<result property="keyWord" column="KEYWORD"/>
 		<result property="geometry" column="geometry" typeHandler = "com.jerry.map.dao.SdoGeometryTypeHandler"/>
 	</resultMap>
 
 	<select id="queryPoiByCity" parameterType="String"
 			resultMap="defaultResultMap">
-		select UNIQUEID,DATAID,CAPTION,CATEGORY,SUBCATEGORY,ALIAS,CITY,geometry from BK13_T_LYR_ENTITY_0129 t where t.geometry.SDO_POINT.x is not null and city=#{city}
+		select UNIQUEID,DATAID,CAPTION,CATEGORY,SUBCATEGORY,ALIAS,CITY,geometry from BK13_T_LYR_ENTITY_0129 t where
+		t.geometry.SDO_POINT.x is not null and city=#{city}
+		<!--	<![CDATA[ select UNIQUEID,DATAID,CAPTION,CATEGORY,SUBCATEGORY,ALIAS,CITY,geometry from (select UNIQUEID,DATAID,
+		 CAPTION,CATEGORY,SUBCATEGORY,ALIAS,CITY,geometry from BK13_T_LYR_ENTITY_0129 t where t.geometry.SDO_POINT.x
+		 is not null and city='北京市' order by CAPTION asc) where ROWNUM<1000
+	]]> -->
+	</select>
+
+	<select id="queryPoiTotalCount" resultType="Integer">
+
+		SELECT count(1) FROM BK_TYB_LOG_ANALYZE
+	</select>
+
+	<select id="queryPoiBypage" parameterType="Map" resultMap="defaultResultMap">
+
+		SELECT
+		NORMALIZE_QUERY as CAPTION,
+		CITY,
+		CLASSIFY
+		FROM
+		BK_TYB_LOG_ANALYZE T
+		WHERE
+		ROWID IN (
+		SELECT
+		rwd
+		FROM
+		(
+		SELECT
+		T . ROWID rwd,
+		ROWNUM n
+		FROM
+		BK_TYB_LOG_ANALYZE T
+		WHERE
+		ROWNUM <![CDATA[<=]]> #{end}
+		)
+		WHERE
+		n <![CDATA[>=]]> #{start}
+		)
 
 	</select>
+
+
+
 
 
 	<select id="queryPoiAliasByCity" parameterType="String"

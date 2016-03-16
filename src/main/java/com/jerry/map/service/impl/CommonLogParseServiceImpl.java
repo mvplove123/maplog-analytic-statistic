@@ -114,6 +114,7 @@ public class CommonLogParseServiceImpl extends AbstractService {
             log.setSubCategory(pois.get(0).getSubCategory());
             log.setDataId(pois.get(0).getDataId());
             log.setUniqueId(pois.get(0).getUniqueId().toString());
+            log.setIsAliasValid(pois.get(0).getIsAliasFlag());
         }
         return true;
     }
